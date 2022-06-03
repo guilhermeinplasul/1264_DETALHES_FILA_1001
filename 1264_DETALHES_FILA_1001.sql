@@ -1,8 +1,7 @@
-/*
-  Comando 1264 - Cálculo do atributo: 1001 - DETALHES_FILA, empresa: 1
+ /*
+Comando 1264
 */
 DECLARE
-
     v_empresa   number(3) := :p_1;
     v_op        number(8) := :p_2;
     v_etapa     number(3) := :p_3;
@@ -136,7 +135,9 @@ BEGIN
                                AND estitem.subgrupo IN ( 5, 43 )
                                AND ( estitem.descricao LIKE '%OPEN%'
                                       OR estitem.descricao LIKE '%SURLYN%' )
-                        ORDER  BY pcpopcomponente.seq_aplicacao) LOOP
+                        ORDER  BY pcpopcomponente.seq_aplicacao)
+          
+          LOOP
           v_desc_aditivo := v_desc_aditivo
                             ||' '
                             ||r_aditivo.componente;
@@ -200,6 +201,9 @@ BEGIN
       ELSIF v_evoh = 0 AND v_comp_affinity > 0 THEN
         v_prompt6 := 'AFFINITY';
         
+      ELSIF v_evoh > 0 AND v_comp_affinity > 0 THEN
+        v_prompt6 := 'EVOH / AFFINITY';
+        
       END IF;
 
       IF v_atributo IS NULL THEN
@@ -238,8 +242,6 @@ BEGIN
           v_descPigmento := F_busca_valor_ficha(v_empresa, v_produto, v_versao,NULL,65);
         END IF;
         
-        dbms_output.Put_line(v_descPigmento);
-        
       END IF;
       
     ELSIF v_etapa = 20 THEN
@@ -253,7 +255,7 @@ BEGIN
                             AND Nvl(pcpopcomponente.etapa_aplicacao, v_etapa) = v_etapa
                             AND pcpopcomponente.empresa = estitem.empresa
                             AND pcpopcomponente.componente = estitem.codigo
-                            AND estitem.tipo_item = 11
+                            AND estitem.tipo_item in (11,33)
                      ORDER  BY pcpopcomponente.seq_aplicacao) LOOP
           v_desc_comp := v_desc_comp
                          ||' '
@@ -488,4 +490,4 @@ EXCEPTION
     WHEN OTHERS THEN
       :p_5 := SQLERRM;
       
-END;  
+END;
